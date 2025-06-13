@@ -24,7 +24,7 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info('Entered the data ingestion method.')
         try:
-            df = pd.read_csv('resume_screening_5percent_missing.csv')
+            df = pd.read_csv(r'notebook\data\resume_screening_5percent_missing.csv')
             logging.info('Read the dataset as dataframe.')
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
@@ -37,6 +37,7 @@ class DataIngestion:
 
             logging.info('Ingestion of data is completed.')
 
+
             return (
                 self.ingestion_config.train_data_path,
                 self.ingestion_config.test_data_path
@@ -44,3 +45,4 @@ class DataIngestion:
         
         except Exception as e:
             raise CustomException(e, sys)
+
