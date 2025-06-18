@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resume Screening Predictor</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card p-4">
+        <h2 class="mb-4 text-center">
+          <span class="en">Resume Screening Predictor</span>
+          <span class="ko" style="display: none">이력서 검토 예측기</span>
+        </h2>
+
+        <div class="d-flex justify-content-end mb-3">
+          <div class="btn-group" role="group" aria-label="Language toggle">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setLanguage('en')"
+            >
+              English
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setLanguage('ko')"
+            >
+              한국어
+            </button>
+          </div>
+        </div>
+
+        <form action="/predictdata" method="post" class="row g-3">
+          <div class="col-md-4">
+            <label for="age" class="form-label">
+              <span class="en">Age</span>
+              <span class="ko" style="display: none">나이</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="age"
+              name="age"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="gender" class="form-label">
+              <span class="en">Gender</span>
+              <span class="ko" style="display: none">성별</span>
+            </label>
+            <select class="form-select" id="gender" name="gender">
+              <option value="Male" selected>
+                <span class="en">Male</span
+                ><span class="ko" style="display: none">남성</span>
+              </option>
+              <option value="Female">
+                <span class="en">Female</span
+                ><span class="ko" style="display: none">여성</span>
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="topik_level" class="form-label">
+              <span class="en">TOPIK Level</span>
+              <span class="ko" style="display: none">토픽 등급</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="topik_level"
+              name="topik_level"
+              min="1"
+              max="6"
+              step="1"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="highest_degree" class="form-label">
+              <span class="en">Highest Degree</span>
+              <span class="ko" style="display: none">최종 학위</span>
+            </label>
+            <select
+              class="form-select"
+              id="highest_degree"
+              name="highest_degree"
+            >
+              <option value="Bachelor" selected>
+                <span class="en">Bachelor</span
+                ><span class="ko" style="display: none">학사</span>
+              </option>
+              <option value="Master">
+                <span class="en">Master</span
+                ><span class="ko" style="display: none">석사</span>
+              </option>
+              <option value="PhD">
+                <span class="en">PhD</span
+                ><span class="ko" style="display: none">박사</span>
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="major_field" class="form-label">
+              <span class="en">Major Field</span>
+              <span class="ko" style="display: none">전공 분야</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="major_field"
+              name="major_field"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="university_type" class="form-label">
+              <span class="en">University Type</span>
+              <span class="ko" style="display: none">대학교 유형</span>
+            </label>
+            <select
+              class="form-select"
+              id="university_type"
+              name="university_type"
+            >
+              <option value="National" selected>
+                <span class="en">National</span
+                ><span class="ko" style="display: none">국립</span>
+              </option>
+              <option value="Private">
+                <span class="en">Private</span
+                ><span class="ko" style="display: none">사립</span>
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="gpa" class="form-label">
+              <span class="en">GPA</span>
+              <span class="ko" style="display: none">학점</span>
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              class="form-control"
+              id="gpa"
+              name="gpa"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="experience_years" class="form-label">
+              <span class="en">Experience Years</span>
+              <span class="ko" style="display: none">경력 연수</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="experience_years"
+              name="experience_years"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="num_projects" class="form-label">
+              <span class="en">Number of Projects</span>
+              <span class="ko" style="display: none">프로젝트 수</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="num_projects"
+              name="num_projects"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="internships" class="form-label">
+              <span class="en">Internships</span>
+              <span class="ko" style="display: none">인턴십</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="internships"
+              name="internships"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="certifications" class="form-label">
+              <span class="en">Certifications</span>
+              <span class="ko" style="display: none">자격증</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="certifications"
+              name="certifications"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="has_portfolio" class="form-label">
+              <span class="en">Has Portfolio (0 or 1)</span>
+              <span class="ko" style="display: none"
+                >포트폴리오 여부 (0 또는 1)</span
+              >
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="1"
+              class="form-control"
+              id="has_portfolio"
+              name="has_portfolio"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="github_level" class="form-label">
+              <span class="en">GitHub Level</span>
+              <span class="ko" style="display: none">GitHub 수준</span>
+            </label>
+            <select class="form-select" id="github_level" name="github_level">
+              <option value="None" selected>
+                <span class="en">None</span
+                ><span class="ko" style="display: none">없음</span>
+              </option>
+              <option value="Beginner">
+                <span class="en">Beginner</span
+                ><span class="ko" style="display: none">초급</span>
+              </option>
+              <option value="Intermediate">
+                <span class="en">Intermediate</span
+                ><span class="ko" style="display: none">중급</span>
+              </option>
+              <option value="Advanced">
+                <span class="en">Advanced</span
+                ><span class="ko" style="display: none">고급</span>
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="job_field" class="form-label">
+              <span class="en">Job Field</span>
+              <span class="ko" style="display: none">직무 분야</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="job_field"
+              name="job_field"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="resume_length" class="form-label">
+              <span class="en">Resume Length (pages)</span>
+              <span class="ko" style="display: none">이력서 길이 (페이지)</span>
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              class="form-control"
+              id="resume_length"
+              name="resume_length"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="cover_letter_score" class="form-label">
+              <span class="en">Cover Letter Score (1–10)</span>
+              <span class="ko" style="display: none"
+                >자기소개서 점수 (1~10)</span
+              >
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              step="0.1"
+              class="form-control"
+              id="cover_letter_score"
+              name="cover_letter_score"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="tailored_resume" class="form-label">
+              <span class="en">Tailored Resume (0 or 1)</span>
+              <span class="ko" style="display: none"
+                >맞춤 이력서 (0 또는 1)</span
+              >
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="1"
+              class="form-control"
+              id="tailored_resume"
+              name="tailored_resume"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="english_level" class="form-label">
+              <span class="en">English Level</span>
+              <span class="ko" style="display: none">영어 수준</span>
+            </label>
+            <select class="form-select" id="english_level" name="english_level">
+              <option value="Basic" selected>
+                <span class="en">Basic</span
+                ><span class="ko" style="display: none">기초</span>
+              </option>
+              <option value="Intermediate">
+                <span class="en">Intermediate</span
+                ><span class="ko" style="display: none">중간</span>
+              </option>
+              <option value="Fluent">
+                <span class="en">Fluent</span
+                ><span class="ko" style="display: none">유창함</span>
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="leadership_experience" class="form-label">
+              <span class="en">Leadership Experience (years)</span>
+              <span class="ko" style="display: none">리더십 경험 (년)</span>
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              class="form-control"
+              id="leadership_experience"
+              name="leadership_experience"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="military_status" class="form-label">
+              <span class="en">Military Status</span>
+              <span class="ko" style="display: none">병역 상태</span>
+            </label>
+            <select
+              class="form-select"
+              id="military_status"
+              name="military_status"
+            >
+              <option value="Completed" selected>
+                <span class="en">Completed</span
+                ><span class="ko" style="display: none">이수함</span>
+              </option>
+              <option value="Exempted">
+                <span class="en">Exempted</span
+                ><span class="ko" style="display: none">면제됨</span>
+              </option>
+              <option value="Not Applicable">
+                <span class="en">Not Applicable</span
+                ><span class="ko" style="display: none">해당 없음</span>
+              </option>
+            </select>
+          </div>
+          <button type="submit" id="predict-button" class="btn btn-primary">
+            <span class="en">Predict</span>
+            <span class="ko" style="display: none">예측하기</span>
+          </button>
+        </form>
+
+        {% if prediction is not none %}
+        <div class="alert alert-success mt-4 text-center fs-5" role="alert">
+          <strong>
+            <span class="en">Prediction:</span>
+            <span class="ko" style="display: none">예측 결과:</span>
+          </strong>
+          {{ prediction }}
+        </div>
+
+        {% endif %}
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      function setLanguage(lang) {
+        localStorage.setItem("selectedLanguage", lang);
+        document.querySelectorAll(".en, .ko").forEach((el) => {
+          if (lang === "ko") {
+            if (el.classList.contains("ko")) el.style.display = "inline";
+            else el.style.display = "none";
+          } else {
+            if (el.classList.contains("en")) el.style.display = "inline";
+            else el.style.display = "none";
+          }
+        });
+      }
+
+      window.onload = function () {
+        const lang = localStorage.getItem("selectedLanguage") || "en";
+        setLanguage(lang); // Set initial language on page load
+      };
+    </script>
+  </body>
+</html>
