@@ -1,59 +1,56 @@
-from flask import Flask, request, render_template
-import pandas as pd
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
-application = Flask(__name__)
-app = application
+app = Flask(__name__)
+CORS(app)  # Allow React frontend to access
 
-@app.route('/')
-def index():
-    return render_template('index.html') 
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data_json = request.get_json()
+        print("Received JSON:", data_json)  # Debug logging
 
-@app.route('/predictdata', methods=['GET', 'POST'])
-def predict_datapoint():
-    if request.method == 'GET':
-        return render_template('home.html')
-    else:
+        # Safely extract numeric fields; default to 0 if missing or invalid
+        def to_float(key):
+            try:
+                return float(data_json.get(key, 0))
+            except (TypeError, ValueError):
+                return 0
+
         data = CustomData(
-            age=float(request.form.get('age')),
-            gender=request.form.get('gender'),
-            topik_level=float(request.form.get('topik_level')),
-            highest_degree=request.form.get('highest_degree'),
-            major_field=request.form.get('major_field'),
-            university_type=request.form.get('university_type'),
-            gpa=float(request.form.get('gpa')),
-            experience_years=float(request.form.get('experience_years')),
-            num_projects=float(request.form.get('num_projects')),
-            internships=float(request.form.get('internships')),
-            certifications=float(request.form.get('certifications')),
-            has_portfolio=float(request.form.get('has_portfolio')),
-            github_level=request.form.get('github_level'),
-            job_field=request.form.get('job_field'),
-            resume_length=float(request.form.get('resume_length')),
-            cover_letter_score=float(request.form.get('cover_letter_score')),
-            tailored_resume=float(request.form.get('tailored_resume')),
-            english_level=request.form.get('english_level'),
-            leadership_experience=float(request.form.get('leadership_experience')),
-            military_status=request.form.get('military_status')
+            age=to_float('age'),
+            gender=data_json.get('gender', ''),
+            topik_level=to_float('topik_level'),
+            highest_degree=data_json.get('highest_degree', ''),
+            major_field=data_json.get('major_field', ''),
+            university_type=data_json.get('university_type', ''),
+            gpa=to_float('gpa'),
+            experience_years=to_float('experience_years'),
+            num_projects=to_float('num_projects'),
+            internships=to_float('internships'),
+            certifications=to_float('certifications'),
+            has_portfolio=to_float('has_portfolio'),
+            github_level=data_json.get('github_level', ''),
+            job_field=data_json.get('job_field', ''),
+            resume_length=to_float('resume_length'),
+            cover_letter_score=to_float('cover_letter_score'),
+            tailored_resume=to_float('tailored_resume'),
+            english_level=data_json.get('english_level', ''),
+            leadership_experience=to_float('leadership_experience'),
+            military_status=data_json.get('military_status', '')
         )
 
         pred_df = data.get_data_as_data_frame()
-        print(pred_df)
-        print("Before Prediction")
-
         predict_pipeline = PredictPipeline()
-        print("Mid Prediction")
         results = predict_pipeline.predict(pred_df)
-        print("After Prediction")
 
-        language = request.form.get('lang', 'en')
-        if results[0] == 1.0:
-            result_text = "PASS" if language == 'en' else "합격"
-        else:
-            result_text = "FAIL" if language == 'en' else "불합격"
+        result_text = "PASS" if results[0] == 1.0 else "FAIL"
+        return jsonify({"prediction": result_text})
 
-        return render_template("home.html", prediction=result_text)
+    except Exception as e:
+        print("Prediction error:", e)
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
-
+    app.run(host="0.0.0.0", port=5000, debug=True)
