@@ -2,7 +2,8 @@ JobPredict
 
 How system works
 
-flowchart.png
+Testing:
+![alt text](<JobPredict .gif>)
 
 A machine learning–powered web application that predicts PASS or FAIL for a candidate based on their profile data.
 The core of this project is a custom-trained classification model that processes multiple candidate features and outputs a binary decision, deployed through a Python backend and connected to a React + TypeScript frontend.
@@ -72,6 +73,3 @@ React + TypeScript (Vite)
 Tailwind CSS for styling
 
 Context API for multi-language text handling
-
-Testing:
-![alt text](<JobPredict .gif>)
